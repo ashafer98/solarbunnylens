@@ -1,4 +1,3 @@
-// src/data/art.js
 export const artwork = [
   {
     id: 'diamond-eyes',
@@ -6,6 +5,7 @@ export const artwork = [
     price: 150.0,
     image: '/images/DiamondEyes.jpeg',
     description: 'Stunning eyes sparkling like diamonds.',
+    type: 'print',
   },
   {
     id: 'pumpkin-boy',
@@ -13,6 +13,7 @@ export const artwork = [
     price: 120.0,
     image: '/images/PumpkinBoy.jpeg',
     description: 'Whimsical pumpkin-themed portrait.',
+    type: 'print',
   },
   {
     id: 'revival',
@@ -20,6 +21,5 @@ export const artwork = [
     price: 200.0,
     image: '/images/Revival.jpeg',
     description: 'A vibrant piece symbolizing rebirth.',
-  },
-  // Mock extra artworks for carousel
-]
+    type: 'print',
+  },]

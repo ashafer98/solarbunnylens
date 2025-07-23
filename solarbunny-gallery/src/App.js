@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+
 import Header from './components/Header';
 import ArtworkCarousel from './components/ArtworkCarousel';
 import Cart from './components/Cart';
@@ -8,8 +11,10 @@ import Shop from './pages/shop';
 import Checkout from './components/Checkout';
 import { artwork } from './data/art';
 
+// Load your Stripe public key (replace with your actual key)
+const stripePromise = loadStripe('pk_test_51RnukwBIf5dUFES1DkdVVNXrXC9CoixWjNAjXMIQ7yy7JPA0xDg4FqnrVGFUjG4kwTm0vApbIsBUAq4Urgo8Tzy200z6cdA3gY');
+
 const AppContent = () => {
-  const location = useLocation();
   const navigate = useNavigate();
 
   const [cart, setCart] = useState([]);
@@ -25,7 +30,7 @@ const AppContent = () => {
       }
       return [...prevCart, { ...art, quantity: 1 }];
     });
-    setDrawerOpen(true); // Open cart drawer when adding an item
+    setDrawerOpen(true);
   };
 
   const updateQuantity = (id, quantity) => {
@@ -44,7 +49,7 @@ const AppContent = () => {
   const toggleCart = () => setDrawerOpen((open) => !open);
 
   const onCheckout = () => {
-    setDrawerOpen(false); // close drawer on checkout
+    setDrawerOpen(false);
     navigate('/checkout');
   };
 
@@ -68,7 +73,11 @@ const AppContent = () => {
           <Route path="/shop" element={<Shop onAddToCart={addToCart} />} />
           <Route
             path="/checkout"
-            element={<Checkout cartItems={cart} clearCart={clearCart} />}
+            element={
+              <Elements stripe={stripePromise}>
+                <Checkout cartItems={cart} clearCart={clearCart} />
+              </Elements>
+            }
           />
         </Routes>
       </main>
@@ -80,7 +89,6 @@ const AppContent = () => {
           ${drawerOpen ? 'translate-x-0' : 'translate-x-full'}
           w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl`}
       >
-        {/* Close Button */}
         <div className="flex justify-end p-4 border-b">
           <button
             onClick={toggleCart}
@@ -91,7 +99,6 @@ const AppContent = () => {
           </button>
         </div>
 
-        {/* Cart content with scroll */}
         <div className="flex-1 overflow-y-auto p-4">
           <Cart
             cartItems={cart}
@@ -102,7 +109,6 @@ const AppContent = () => {
         </div>
       </div>
 
-      {/* Overlay */}
       {drawerOpen && (
         <div
           onClick={toggleCart}

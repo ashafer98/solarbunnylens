@@ -45,6 +45,7 @@ const ArtworkCarousel = ({ artwork, onAddToCart }) => {
 
       <h2 className="mt-4 text-3xl font-bold text-primary">{currentArt.title}</h2>
       <p className="mt-2 text-primary">{currentArt.description}</p>
+      <p className="mt-1 italic text-sm text-gray-600">Type: {currentArt.type}</p> {/* NEW LINE */}
       <p className="mt-1 font-semibold text-primary">${currentArt.price.toFixed(2)}</p>
 
       <button
