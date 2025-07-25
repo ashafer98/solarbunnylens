@@ -10,7 +10,7 @@ const Header = ({ cartCount = 0, toggleCart }) => {
     <header className="bg-darkBg text-lightBg p-4 sticky top-0 z-50 shadow-md">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <Link to="/" className="text-2xl font-bold">
-          Solar Bunny Gallery
+          Solar Bunny Creative
         </Link>
 
         {/* Desktop Menu */}

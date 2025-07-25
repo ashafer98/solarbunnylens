@@ -8,7 +8,6 @@ import ArtworkCarousel from './components/ArtworkCarousel';
 import Cart from './components/Cart';
 import About from './components/About';
 import Shop from './pages/shop';
-import Checkout from './components/Checkout';
 import ContactForm from './components/ContactForm'; // ✅ Added import
 import { artwork } from './data/art';
 
@@ -49,9 +48,9 @@ const AppContent = () => {
 
   const toggleCart = () => setDrawerOpen((open) => !open);
 
+  // Just close the drawer on checkout because Cart.js handles redirect
   const onCheckout = () => {
     setDrawerOpen(false);
-    navigate('/checkout');
   };
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -75,14 +74,7 @@ const AppContent = () => {
             }
           />
           <Route path="/shop" element={<Shop onAddToCart={addToCart} />} />
-          <Route
-            path="/checkout"
-            element={
-              <Elements stripe={stripePromise}>
-                <Checkout cartItems={cart} clearCart={clearCart} />
-              </Elements>
-            }
-          />
+          {/* Removed /checkout route and Checkout component */}
         </Routes>
       </main>
 
@@ -109,6 +101,7 @@ const AppContent = () => {
             updateQuantity={updateQuantity}
             removeItem={removeItem}
             onCheckout={onCheckout}
+            clearCart={clearCart}
           />
         </div>
       </div>
