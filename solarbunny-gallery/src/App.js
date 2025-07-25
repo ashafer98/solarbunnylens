@@ -9,6 +9,7 @@ import Cart from './components/Cart';
 import About from './components/About';
 import Shop from './pages/shop';
 import Checkout from './components/Checkout';
+import ContactForm from './components/ContactForm'; // ✅ Added import
 import { artwork } from './data/art';
 
 // Load your Stripe public key (replace with your actual key)
@@ -67,6 +68,9 @@ const AppContent = () => {
               <>
                 <ArtworkCarousel artwork={artwork} onAddToCart={addToCart} />
                 <About />
+                <div className="py-12 bg-gray-50">
+                  <ContactForm />
+                </div>
               </>
             }
           />
