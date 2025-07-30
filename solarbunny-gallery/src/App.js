@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements } from '@stripe/react-stripe-js';
 
 import Header from './components/Header';
 import ArtworkCarousel from './components/ArtworkCarousel';
 import Cart from './components/Cart';
 import About from './components/About';
 import Shop from './pages/shop';
-import ContactForm from './components/ContactForm'; // ✅ Added import
+import ContactForm from './components/ContactForm';
 import { artwork } from './data/art';
 
-// Load your Stripe public key (replace with your actual key)
 const stripePromise = loadStripe('pk_test_51RnukwBIf5dUFES1DkdVVNXrXC9CoixWjNAjXMIQ7yy7JPA0xDg4FqnrVGFUjG4kwTm0vApbIsBUAq4Urgo8Tzy200z6cdA3gY');
 
-const AppContent = () => {
+const App = () => {
   const navigate = useNavigate();
 
   const [cart, setCart] = useState([]);
@@ -48,7 +46,6 @@ const AppContent = () => {
 
   const toggleCart = () => setDrawerOpen((open) => !open);
 
-  // Just close the drawer on checkout because Cart.js handles redirect
   const onCheckout = () => {
     setDrawerOpen(false);
   };
@@ -56,7 +53,7 @@ const AppContent = () => {
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div className="min-h-screen bg-white text-[#383659] p-6 relative">
+    <div className={`min-h-screen bg-white text-[#383659] relative p-6`}>
       <Header cartCount={cartCount} toggleCart={toggleCart} />
 
       <main>
@@ -74,24 +71,23 @@ const AppContent = () => {
             }
           />
           <Route path="/shop" element={<Shop onAddToCart={addToCart} />} />
-          {/* Removed /checkout route and Checkout component */}
         </Routes>
       </main>
 
       {/* Cart Drawer */}
       <div
-        className={`fixed top-0 right-0 h-screen max-h-screen bg-white shadow-xl transform transition-transform duration-300 ease-in-out z-50
+        className={`fixed top-0 right-0 h-screen bg-white shadow-xl transform transition-transform duration-300 ease-in-out z-50
           flex flex-col
           ${drawerOpen ? 'translate-x-0' : 'translate-x-full'}
-          w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl`}
+          w-full sm:w-96 md:w-96 lg:w-96 xl:w-96`}
       >
         <div className="flex justify-end p-4 border-b">
           <button
             onClick={toggleCart}
-            className="text-gray-700 hover:text-gray-900 focus:outline-none text-2xl font-bold"
             aria-label="Close cart"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 hover:text-gray-900 transition focus:outline-none"
           >
-            &times;
+            <span className="text-2xl font-bold leading-none">&times;</span>
           </button>
         </div>
 
@@ -102,6 +98,8 @@ const AppContent = () => {
             removeItem={removeItem}
             onCheckout={onCheckout}
             clearCart={clearCart}
+            showOptions={true}
+            hideRemoveButtons={false}
           />
         </div>
       </div>
@@ -120,10 +118,10 @@ const AppContent = () => {
   );
 };
 
-const App = () => (
-  <Router>
-    <AppContent />
-  </Router>
-);
-
-export default App;
+export default function AppWrapper() {
+  return (
+    <Router>
+      <App />
+    </Router>
+  );
+}
