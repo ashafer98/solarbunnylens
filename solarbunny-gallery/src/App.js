@@ -63,8 +63,8 @@ const App = () => {
             element={
               <>
                 <ArtworkCarousel artwork={artwork} onAddToCart={addToCart} />
-                <About />
                 <GalleryCarousel />
+                <About />
                 <div className="py-12 bg-gray-50">
                   <ContactForm />
                 </div>
@@ -116,7 +116,7 @@ const App = () => {
       )}
 
       <footer className="mt-20 p-6 bg-[#272640] text-[#D9BB96] text-center">
-        &copy; 2025 Solar Bunny Gallery
+        &copy; 2025 Solar Bunny Lens
       </footer>
     </div>
   );

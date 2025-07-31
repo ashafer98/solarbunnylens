@@ -44,7 +44,18 @@ const slides = [
 
 export default function GalleryCarousel() {
   return (
+
+    
+
     <div className="w-full max-w-5xl mx-auto py-10">
+        {/* Heading */}
+      <h2 className="text-4xl font-bold text-center mb-2">Photography Gallery</h2>
+
+      {/* Subtext */}
+      <p className="text-center text-gray-600 max-w-xl mx-auto mb-8">
+        Explore my curated collections of Concert, Model, and Event photography. Click any card below to see the full gallery.
+      </p>
+
       <Swiper
         modules={[Navigation]}
         navigation
