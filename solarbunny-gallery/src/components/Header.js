@@ -3,14 +3,13 @@ import { Link } from 'react-router-dom';
 
 const Header = ({ cartCount = 0, toggleCart }) => {
   const [menuOpen, setMenuOpen] = useState(false);
-
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   return (
     <header className="bg-darkBg text-lightBg p-4 sticky top-0 z-50 shadow-md">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <Link to="/" className="text-2xl font-bold">
-          Solar Bunny Creative
+          Solar Bunny Lens
         </Link>
 
         {/* Desktop Menu */}
@@ -18,12 +17,15 @@ const Header = ({ cartCount = 0, toggleCart }) => {
           <Link to="/shop" className="hover:text-accent transition">
             Shop
           </Link>
-          <a href="#about" className="hover:text-accent transition">
+          <Link to="/portfolio" className="hover:text-accent transition">
+            Portfolio
+          </Link>
+          <Link to="/about" className="hover:text-accent transition">
             About
-          </a>
-          <a href="#contact" className="hover:text-accent transition">
+          </Link> 
+          <Link to="/contact" className="hover:text-accent transition">
             Contact
-          </a>
+          </Link>
 
           {/* Cart Icon */}
           <button
@@ -123,13 +125,20 @@ const Header = ({ cartCount = 0, toggleCart }) => {
           >
             Shop
           </Link>
-          <a
-            href="#about"
+          <Link
+            to="/portfolio"
+            onClick={() => setMenuOpen(false)}
+            className="block hover:text-accent transition"
+          >
+            Portfolio
+          </Link>
+          <Link
+            to="/about"
             onClick={() => setMenuOpen(false)}
             className="block hover:text-accent transition"
           >
             About
-          </a>
+          </Link>
           <a
             href="#contact"
             onClick={() => setMenuOpen(false)}

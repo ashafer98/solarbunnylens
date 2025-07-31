@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
@@ -6,8 +7,10 @@ import Header from './components/Header';
 import ArtworkCarousel from './components/ArtworkCarousel';
 import Cart from './components/Cart';
 import About from './components/About';
+import Portfolio from './components/Portfolio'; // 👈 new import
 import Shop from './pages/shop';
 import ContactForm from './components/ContactForm';
+import Contact from './pages/Contact';
 import { artwork } from './data/art';
 
 const stripePromise = loadStripe('pk_test_51RnukwBIf5dUFES1DkdVVNXrXC9CoixWjNAjXMIQ7yy7JPA0xDg4FqnrVGFUjG4kwTm0vApbIsBUAq4Urgo8Tzy200z6cdA3gY');
@@ -43,13 +46,8 @@ const App = () => {
   };
 
   const clearCart = () => setCart([]);
-
   const toggleCart = () => setDrawerOpen((open) => !open);
-
-  const onCheckout = () => {
-    setDrawerOpen(false);
-  };
-
+  const onCheckout = () => setDrawerOpen(false);
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
@@ -71,6 +69,9 @@ const App = () => {
             }
           />
           <Route path="/shop" element={<Shop onAddToCart={addToCart} />} />
+          <Route path="/portfolio" element={<Portfolio />} /> {/* ✅ New route */}
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
         </Routes>
       </main>
 
