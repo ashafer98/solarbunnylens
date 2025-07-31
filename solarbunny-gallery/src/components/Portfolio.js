@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom'; // make sure you have react-router-dom installed
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import ContactForm from './ContactForm';
@@ -34,6 +35,9 @@ const modelImages = [
   "/images/Model/Lexi.jpg",
   "/images/Model/LexiI.jpg",
   "/images/Model/LexiII.jpg",
+  "/images/Event/SarahDawn.jpg",
+  "/images/Event/SarahDawnI.jpg",
+  "/images/Event/SarahDawnII.jpg",
 ];
 
 const eventImages = [
@@ -51,16 +55,26 @@ const eventImages = [
   "/images/Event/LVAwardsII.jpg",
   "/images/Event/LVAwardsIII.jpg",
   "/images/Event/LVAwardsIV.jpg",
-  "/images/Event/SarahDawn.jpg",
-  "/images/Event/SarahDawnI.jpg",
-  "/images/Event/SarahDawnII.jpg",
-   "/images/Event/LopezWD.jpg",
+  "/images/Event/LopezWD.jpg",
   "/images/Event/LopezWDI.jpg",
 ];
 
 export default function PortfolioCarousel() {
   const imageWidth = 800;
   const imageHeight = 500;
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash) {
+      const element = document.querySelector(location.hash);
+      if (element) {
+        const yOffset = -80; // adjust this offset to your fixed header height
+        const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    }
+  }, [location]);
 
   const renderCarousel = (images, title, ariaLabel, id) => (
     <section className="max-w-4xl mx-auto py-10 relative">
@@ -121,9 +135,9 @@ export default function PortfolioCarousel() {
       {renderCarousel(eventImages, "Special Event Gallery", "Event photos carousel", "event")}
 
       {/* About Section */}
-    <section id="about" className="max-w-4xl mx-auto px-6 py-12">
-      <About />
-    </section>
+      <section id="about" className="max-w-4xl mx-auto px-6 py-12">
+        <About />
+      </section>
 
       {/* Contact Form Section */}
       <section id="contact" className="max-w-4xl mx-auto px-6 py-12">

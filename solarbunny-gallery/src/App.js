@@ -11,6 +11,8 @@ import Portfolio from './components/Portfolio'; // 👈 new import
 import Shop from './pages/shop';
 import ContactForm from './components/ContactForm';
 import Contact from './pages/Contact';
+import GalleryCarousel from './components/GalleryCarousel';
+
 import { artwork } from './data/art';
 
 const stripePromise = loadStripe('pk_test_51RnukwBIf5dUFES1DkdVVNXrXC9CoixWjNAjXMIQ7yy7JPA0xDg4FqnrVGFUjG4kwTm0vApbIsBUAq4Urgo8Tzy200z6cdA3gY');
@@ -62,6 +64,7 @@ const App = () => {
               <>
                 <ArtworkCarousel artwork={artwork} onAddToCart={addToCart} />
                 <About />
+                <GalleryCarousel />
                 <div className="py-12 bg-gray-50">
                   <ContactForm />
                 </div>
