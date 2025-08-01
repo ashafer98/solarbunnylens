@@ -3,51 +3,84 @@ const express = require('express');
 const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.send('Hello from backend!');
+});
+
 app.post('/create-checkout-session', async (req, res) => {
   const { items, price } = req.body;
 
-  if (!items || !Array.isArray(items)) {
-    return res.status(400).json({ error: "Invalid items." });
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    console.error("Invalid items received:", items);
+    return res.status(400).json({ error: "Invalid or empty items array." });
   }
 
   try {
+    console.log("Creating checkout session for items:", items);
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
-      // automatic_tax: { enabled: true }, 
       billing_address_collection: 'required',
-
       line_items: items.map(item => ({
         price_data: {
           currency: 'usd',
-          product_data: { name: item.name },
-          unit_amount: item.price, // price is already in cents and tax/shipping included
+          product_data: { name: item.name || 'Unnamed Product' },
+          unit_amount: item.price, // price should be in cents
         },
-        quantity: item.quantity > 0 ? item.quantity : 1,
+        quantity: item.quantity && item.quantity > 0 ? item.quantity : 1,
       })),
-
-
-      shipping_address_collection: {
-        allowed_countries: ['US'],
-      },
-
-      // customer_email: email, not sure on this 
-
-      success_url: process.env.SUCCESS_URL || 'http://localhost:3000/success',
-      cancel_url: process.env.CANCEL_URL || 'http://localhost:3000/',
+      success_url: `${process.env.CLIENT_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.CLIENT_URL}/cancel`,
     });
 
-    res.json({ url: session.url });
+    console.log("Session created successfully:", session.id);
+    res.status(200).json({ id: session.id });
+
   } catch (error) {
-    console.error("Stripe Checkout error:", error);
-    res.status(500).json({ error: "Internal server error." });
+    console.error("Stripe session creation failed:", error);
+    res.status(500).json({ error: error.message || "Internal Server Error" });
   }
 });
 
-const PORT = process.env.PORT || 4242;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+const nodemailer = require('nodemailer');
+
+app.post('/contact', async (req, res) => {
+  const { name, email, message } = req.body;
+
+  if (!name || !email || !message) {
+    return res.status(400).json({ error: 'Missing required fields.' });
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to: process.env.EMAIL_TO,
+      subject: 'New Contact Form Submission - SolarBunnyLens',
+      text: `Name: ${name}\nEmail: ${email}\nMessage:\n${message}`,
+    });
+
+    console.log('Email sent successfully');
+    res.status(200).json({ message: 'Email sent successfully' });
+  } catch (error) {
+    console.error('Email sending error:', error);
+    res.status(500).json({ error: 'Failed to send email.' });
+  }
+});
+
+module.exports = app; 
