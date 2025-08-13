@@ -1,7 +1,5 @@
 import React from 'react';
 
-
-
 const Cart = ({
   cartItems,
   updateQuantity,
@@ -16,49 +14,40 @@ const Cart = ({
   const shipping = cartItems.length > 0 ? 5.99 : 0;
   const total = subtotal + tax + shipping;
 
- const handleCheckout = async () => {
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const tax = subtotal * 0.07;
-  const shipping = cartItems.length > 0 ? 5.99 : 0;
-  const total = subtotal + tax + shipping;
+  const handleCheckout = async () => {
+    try {
+      // const response = await fetch('https://wa12d0r7sb.execute-api.us-east-1.amazonaws.com/create-checkout-session', {
+        const response = await fetch('http://localhost:4242/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        mode: 'cors',
+        body: JSON.stringify({
+          items: cartItems.map(item => ({
+            name: item.title,
+            quantity: item.quantity,
+            price: Math.round(item.price * 100), // convert dollars to cents
+          })),
+        }),
+      });
 
-  try {
-    const response = await fetch('https://wa12d0r7sb.execute-api.us-east-1.amazonaws.com/create-checkout-session', {
+      const data = await response.json();
 
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      mode: 'cors',
-      body: JSON.stringify({
-        items: [
-          {
-            name: 'Cart Total',
-            quantity: 1,
-            price: Math.round(total * 100), // send full cart total in cents
-          },
-        ],
-      }),
-    });
-
-    const data = await response.json();
-
-    if (data.url) {
-      clearCart();
-      window.location.href = data.url;
-      onCheckout();
-    } else {
-      alert('Failed to start checkout session.');
+      if (data.url) {
+        onCheckout();    // call before clearing cart for any side effects or analytics
+        clearCart();
+        window.location.href = data.url;
+      } else {
+        alert('Failed to start checkout session.');
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert('An error occurred during checkout.');
     }
-  } catch (error) {
-    console.error('Checkout error:', error);
-    alert('An error occurred during checkout.');
-  }
-};
-
-
+  };
 
   const calculateFinalPrice = (item) => {
     const subtotal = item.price;
-    const tax = subtotal * 0.08; // or whatever your tax logic is
+    const tax = subtotal * 0.08; // or your tax logic
     const shipping = 5.99; // flat rate or based on weight/location
     return Math.round((subtotal + tax + shipping) * 100); // in cents
   };
