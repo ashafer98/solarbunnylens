@@ -2,19 +2,25 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-
+const nodemailer = require('nodemailer');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+const PORT = process.env.PORT || 4242;
+
 app.get('/', (req, res) => {
   res.send('Hello from backend!');
 });
 
 app.post('/create-checkout-session', async (req, res) => {
-  const { items, price } = req.body;
+  const { items } = req.body;
+
+  console.log('CLIENT_URL:', process.env.CLIENT_URL);
+  console.log('Success URL:', `${process.env.CLIENT_URL}/success?session_id={CHECKOUT_SESSION_ID}`);
+  console.log('Cancel URL:', `${process.env.CLIENT_URL}/cancel`);
 
   if (!items || !Array.isArray(items) || items.length === 0) {
     console.error("Invalid items received:", items);
@@ -41,16 +47,13 @@ app.post('/create-checkout-session', async (req, res) => {
     });
 
     console.log("Session created successfully:", session.id);
-    res.status(200).json({ id: session.id });
+    res.status(200).json({ url: session.url, id: session.id });
 
   } catch (error) {
     console.error("Stripe session creation failed:", error);
     res.status(500).json({ error: error.message || "Internal Server Error" });
   }
 });
-
-
-const nodemailer = require('nodemailer');
 
 app.post('/contact', async (req, res) => {
   const { name, email, message } = req.body;
@@ -83,4 +86,24 @@ app.post('/contact', async (req, res) => {
   }
 });
 
-module.exports = app; 
+app.get('/api/checkout-session/:sessionId', async (req, res) => {
+  const sessionId = req.params.sessionId;
+
+  try {
+    // Expand line_items so the client gets the full order details
+    const session = await stripe.checkout.sessions.retrieve(sessionId, {
+      expand: ['line_items'],
+    });
+
+    res.json(session);
+  } catch (error) {
+    console.error('Error fetching checkout session:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+module.exports = app;
