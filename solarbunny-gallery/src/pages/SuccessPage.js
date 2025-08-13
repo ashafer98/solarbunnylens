@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 
+const API_BASE_URL =
+  process.env.NODE_ENV === 'development'
+    ? process.env.REACT_APP_API_URL_LOCAL   // local dev
+    : process.env.REACT_APP_API_URL;        // production
+
+
 function SuccessPage() {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get('session_id');
@@ -18,7 +24,8 @@ function SuccessPage() {
 
     async function fetchSession() {
       try {
-        const res = await fetch(`http://localhost:4242/api/checkout-session/${sessionId}`);
+        const res = await fetch(`${API_BASE_URL}/api/checkout-session/${sessionId}`);
+
         if (!res.ok) {
           throw new Error('Failed to fetch checkout session');
         }

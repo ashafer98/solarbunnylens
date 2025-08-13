@@ -14,10 +14,15 @@ const Cart = ({
   const shipping = cartItems.length > 0 ? 5.99 : 0;
   const total = subtotal + tax + shipping;
 
+  const API_URL =
+    process.env.NODE_ENV === 'development'
+    ? process.env.REACT_APP_API_URL_LOCAL   // local dev
+    : process.env.REACT_APP_API_URL;        // production
+
+
   const handleCheckout = async () => {
     try {
-      // const response = await fetch('https://wa12d0r7sb.execute-api.us-east-1.amazonaws.com/create-checkout-session', {
-        const response = await fetch('http://localhost:4242/create-checkout-session', {
+        const response = await fetch(`${API_URL}/create-checkout-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors',
