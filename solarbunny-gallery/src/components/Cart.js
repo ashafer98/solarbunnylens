@@ -23,9 +23,11 @@ const Cart = ({
   const total = subtotal + tax + shipping;
 
   try {
-    const response = await fetch('http://localhost:4242/create-checkout-session', {
+    const response = await fetch('https://wa12d0r7sb.execute-api.us-east-1.amazonaws.com/create-checkout-session', {
+
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      mode: 'cors',
       body: JSON.stringify({
         items: [
           {
