@@ -16,7 +16,7 @@ function ContactForm() {
   e.preventDefault();
 
   try {
-    const res = await fetch('https://wa12d0r7sb.execute-api.us-east-1.amazonaws.com/$default/contact', {
+    const res = await fetch('https://wa12d0r7sb.execute-api.us-east-1.amazonaws.com/contact', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
