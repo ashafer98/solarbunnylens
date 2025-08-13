@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "build": "zip -r lambda.zip *"
+    "build": "node build-zip.js"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +13,7 @@
   "type": "commonjs",
   "dependencies": {
     "@vendia/serverless-express": "^4.12.6",
+    "archiver": "^7.0.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
