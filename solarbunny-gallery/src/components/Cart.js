@@ -10,19 +10,15 @@ const Cart = ({
   hideRemoveButtons = false,
 }) => {
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const tax = subtotal * 0.07;
-  const shipping = cartItems.length > 0 ? 5.99 : 0;
-  const total = subtotal + tax + shipping;
 
   const API_URL =
     process.env.NODE_ENV === 'development'
-    ? process.env.REACT_APP_API_URL_LOCAL   // local dev
-    : process.env.REACT_APP_API_URL;        // production
-
+      ? process.env.REACT_APP_API_URL_LOCAL
+      : process.env.REACT_APP_API_URL;
 
   const handleCheckout = async () => {
     try {
-        const response = await fetch(`${API_URL}/create-checkout-session`, {
+      const response = await fetch(`${API_URL}/create-checkout-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors',
@@ -38,7 +34,7 @@ const Cart = ({
       const data = await response.json();
 
       if (data.url) {
-        onCheckout();    // call before clearing cart for any side effects or analytics
+        onCheckout();
         clearCart();
         window.location.href = data.url;
       } else {
@@ -48,13 +44,6 @@ const Cart = ({
       console.error('Checkout error:', error);
       alert('An error occurred during checkout.');
     }
-  };
-
-  const calculateFinalPrice = (item) => {
-    const subtotal = item.price;
-    const tax = subtotal * 0.08; // or your tax logic
-    const shipping = 5.99; // flat rate or based on weight/location
-    return Math.round((subtotal + tax + shipping) * 100); // in cents
   };
 
   return (
@@ -109,18 +98,8 @@ const Cart = ({
                   <span>Subtotal:</span>
                   <span>${subtotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Tax (7%):</span>
-                  <span>${tax.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Shipping:</span>
-                  <span>${shipping.toFixed(2)}</span>
-                </div>
-                <hr />
-                <div className="flex justify-between font-semibold text-lg">
-                  <span>Total:</span>
-                  <span>${total.toFixed(2)}</span>
+                <div className="text-sm text-gray-500">
+                  Tax and shipping will be calculated at checkout.
                 </div>
               </div>
 
