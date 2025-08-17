@@ -30,18 +30,27 @@ app.post('/create-checkout-session', async (req, res) => {
   try {
     console.log("Creating checkout session for items:", items);
 
+    const taxAmount = 0.07; // 7% tax
+    const shippingAmount = 599; // $5.99 in cents
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
       billing_address_collection: 'required',
-      line_items: items.map(item => ({
-        price_data: {
-          currency: 'usd',
-          product_data: { name: item.name || 'Unnamed Product' },
-          unit_amount: item.price, // price should be in cents
-        },
-        quantity: item.quantity && item.quantity > 0 ? item.quantity : 1,
-      })),
+      line_items: items.map(item => {
+        const subtotal = item.price * (item.quantity && item.quantity > 0 ? item.quantity : 1);
+        const tax = Math.round(subtotal * taxAmount);
+        const total = subtotal + tax + shippingAmount;
+
+        return {
+          price_data: {
+            currency: 'usd',
+            product_data: { name: item.name || 'Unnamed Product' },
+            unit_amount: total, // includes item price + tax + shipping
+          },
+          quantity: 1, // each line_item now includes all charges
+        };
+      }),
       success_url: `${process.env.CLIENT_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.CLIENT_URL}/cancel`,
     });
