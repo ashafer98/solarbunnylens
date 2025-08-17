@@ -1,0 +1,13 @@
+aws lambda update-function-code \
+  --function-name stripe-backend \
+  --zip-file fileb://lambda.zip \
+  --region us-east-1
+
+aws logs tail /aws/lambda/stripe-backend --follow
+
+  
+
+
+
+aws s3 sync build/ s3://solarbunny --delete
+

@@ -13,10 +13,6 @@ function createZip() {
       resolve();
     });
 
-    output.on('end', () => {
-      console.log('Data has been drained');
-    });
-
     archive.on('warning', (err) => {
       if (err.code === 'ENOENT') {
         console.warn('Warning:', err);
@@ -31,20 +27,16 @@ function createZip() {
 
     archive.pipe(output);
 
-    // Use glob and exclude node_modules, .git, and the zip itself
+    // Include everything except .git and the ZIP itself
     archive.glob('**/*', {
-      ignore: ['node_modules/**', '.git/**', 'lambda.zip']
+      ignore: ['.git/**', 'lambda.zip']
     });
 
     archive.finalize().catch(err => reject(err));
   });
 }
 
-// Run the test
+// Run the zip creation
 createZip()
-  .then(() => {
-    console.log('Zip creation test succeeded!');
-  })
-  .catch(err => {
-    console.error('Zip creation test failed:', err);
-  });
+  .then(() => console.log('Zip creation succeeded!'))
+  .catch(err => console.error('Zip creation failed:', err));
